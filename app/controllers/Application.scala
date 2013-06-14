@@ -8,7 +8,7 @@ import scala.collection.JavaConversions._
 
 object Application extends Controller {
   private lazy val rootDir = """/home/%s/testServerApi""" format(System.getProperty("user.name"))
-  private lazy val wtDir = """$s/Expert""" format(rootDir)
+  private lazy val wtDir = """%s/Expert""" format(rootDir)
 
   private def wt     = WorkingTree.getInstance(wtDir)
   private def dotGit = wt.getDotGit()
@@ -23,6 +23,9 @@ object Application extends Controller {
   private def branches =
     dotGit.getBranches().toList.map(_.getName())
 
+  private def currentBranch =
+    wt.getCurrentBranch().getName()
+
   private def checkoutBranch(name : String) {
     wt.checkout(dotGit.getBranches().toList.find(x => x.getName() == name).get)
   }
@@ -32,7 +35,14 @@ object Application extends Controller {
   // }
 
   def index = Action {
-    Ok(views.html.index(JavaGitConfiguration.getGitVersion()))
+    Ok(views.html.index(JavaGitConfiguration.getGitVersion(),
+                        commits, currentBranch, branches))
   }
+
+  def restart = TODO
+  def stop    = TODO
+  def checkoutAll = TODO
+  def checkoutBranchWithName(name : String) = TODO
+  def status = TODO
 
 }
