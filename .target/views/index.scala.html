@@ -34,6 +34,12 @@
           <span>@currentBranch</span>
         </p>
 
+<!--
+        //   POST    /restart/                   controllers.Application.restart
+// POST    /stop/                      controllers.Application.stop
+// POST    /checkoutAll/               controllers.Application.checkoutAll
+// POST    /checkoutBranch/:name/      controllers.Application.checkoutBranch(name : String) -->
+
         <p>
           <span><strong>Branch to checkout: </strong></span>
           <span>
@@ -48,10 +54,19 @@
           </span>
         </p>
 
-        <p>
+        <hr />
+
+        <p class="center">
           <button class="button green"> <i class="icon-play"></i> (Re)Start service</button>
           <button class="button red"> <i class="icon-stop"></i> Stop service</button>
           <button class="button red"> <i class="icon-bolt"></i> Checkout all</button>
+        </p>
+
+        <hr />
+
+        <p class="center">
+          <button class="button green"> <i class="icon-play"></i> (Re)Start Cassandra</button>
+          <button class="button red"> <i class="icon-stop"></i> Stop Cassandra</button>
         </p>
       </div>
 
