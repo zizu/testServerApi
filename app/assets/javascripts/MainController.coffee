@@ -18,8 +18,12 @@ window.MainController = ($scope, $http) ->
 
   stop_service = ($http) ->
     $http.post("/stop/")
+    
+  checkout_commit = ($http, hash) ->
+    $http.post("/checkoutCommit/" + hash + "/")
 
   run_status_checker($scope, $http)
   check_status($scope, $http)
   window.restart_service = () -> restart_service($http)
   window.stop_service = () -> stop_service($http)
+  window.checkout_commit = (hash) -> checkout_commit($http)

@@ -65,9 +65,7 @@ object Application extends Controller {
     Ok
   }
   
-  //Comet socket
   def serviceLog = WebSocket.using[String] { request =>
-    //Ok.stream(Enumerator.enumerate(serviceStream)) //.as(TEXT)
     val in = Iteratee.consume[String]()
     val out = Enumerator.enumerate(serviceStream).andThen(Enumerator.eof)
     (in, out)
@@ -81,6 +79,7 @@ object Application extends Controller {
   
   def checkoutAll = TODO
   def checkoutBranchWithName(name : String) = TODO
+  def checkoutCommitWithHash(hash : String) = TODO
   
   protected def statusOk = {
     serviceStarted = true

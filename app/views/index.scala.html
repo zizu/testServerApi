@@ -15,7 +15,7 @@
       <div class="commits">
         @for((sha, date, author, desc) <- lastCommits) {
           <p>
-            <span class="sha">@sha</span><br />
+            <span class="sha" onclick="checkout_commit('@sha')"><a href="#">@sha</a></span><br />
             <span>@date, </span><span>@author</span><br />
             <span class="desc">@desc</span><br />
             <hr class="alt2" />
