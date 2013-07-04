@@ -1,7 +1,6 @@
 @(gitVersion: String, lastCommits: List[(String, String, String, String)], currentBranch: String, branches : List[String])
 
 @main("Welcome to Play 2.1") {
-
   <p>
     <span>Git version: </span>
     <span>@gitVersion</span>
@@ -57,8 +56,8 @@
         <hr />
 
         <p class="center">
-          <button class="button green"> <i class="icon-play"></i> (Re)Start service</button>
-          <button class="button red"> <i class="icon-stop"></i> Stop service</button>
+          <button class="button green" onclick="restart_service()"> <i class="icon-play"></i> (Re)Start service</button>
+          <button class="button red" onclick="stop_service()"> <i class="icon-stop"></i> Stop service</button>
           <button class="button red"> <i class="icon-bolt"></i> Checkout all</button>
         </p>
 
@@ -74,11 +73,17 @@
 
       <div>
         <h6>Service status: </h6>
-        <span class="service-ok"><i class="icon-thumbs-up"></i> OK</span>
-        <span class="service-fail"><i class="icon-thumbs-down"></i> Fail :(</span>
+        <span class="service-ok" data-ng-show="status"><i class="icon-thumbs-up"></i> OK</span>
+        <span class="service-fail" data-ng-hide="status"><i class="icon-thumbs-down"></i> Fail :(</span>
       </div>
     </div>
 
+  </div>
+
+  <hr />
+
+  <div class="log">
+    <iframe src="/serviceLog/"></iframe>
   </div>
 
   <hr />

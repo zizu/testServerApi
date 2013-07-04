@@ -11,12 +11,14 @@ object ApplicationBuild extends Build {
     // Add your project dependencies here,
     jdbc,
     anorm,
-    "joda-time" % "joda-time" % "2.2"
+    "joda-time" % "joda-time" % "2.2",
+    "com.github.scala-incubator.io" %% "scala-io-core" % "0.4.2",
+    "com.github.scala-incubator.io" %% "scala-io-file" % "0.4.2"
   )
 
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
-    // Add your own project settings here      
+    // Add your own project settings here
   )
 
 }

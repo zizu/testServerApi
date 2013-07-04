@@ -7,6 +7,7 @@ GET     /                           controllers.Application.index
 GET     /status/                    controllers.Application.status
 POST    /restart/                   controllers.Application.restart
 POST    /stop/                      controllers.Application.stop
+GET     /serviceLog/                controllers.Application.serviceLog
 POST    /checkoutAll/               controllers.Application.checkoutAll
 POST    /checkoutBranch/:name/      controllers.Application.checkoutBranchWithName(name : String)
 
