@@ -82,15 +82,16 @@
 
   <hr />
 
-  <div class="log">
+  <div class="log">    
+    <textarea id="log-area"> </textarea>
     <script>
       var socket = new WebSocket("ws://localhost:9000/serviceLog/");
       socket.onmessage = function(msg) {
-        }
+        var area = $("textarea#log-area");
+        area.val(area.val() + "\n" + msg.data);
+        console.log(msg.data);
+      }
     </script>
-    <span>
-      
-    </span>
   </div>
 
   <hr />
