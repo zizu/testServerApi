@@ -66,8 +66,11 @@ object Application extends Controller {
   }
   
   //Comet socket
-  def serviceLog = Action {
-    Ok.stream(Enumerator.enumerate(serviceStream)).as(TEXT)
+  def serviceLog = WebSocket.using[String] { request =>
+    //Ok.stream(Enumerator.enumerate(serviceStream)) //.as(TEXT)
+    val in = Iteratee.consume[String]()
+    val out = Enumerator.enumerate(serviceStream).andThen(Enumerator.eof)
+    (in, out)
   }
   
   def stop = Action {
@@ -90,17 +93,16 @@ object Application extends Controller {
   } 
   
   def status = Action {
-    try {
-      val pingFuture = WS.url("http://localhost:8888/apps/ping").get().map(x => x.body)    
-      val timeoutFuture = Promise.timeout("Fail", 2.seconds)    
-      Async {
-        scala.concurrent.Future.firstCompletedOf(Seq(pingFuture, timeoutFuture)).map {
-          case "pong" => statusOk
-          case x => statusFail
-        }
+    val pingFuture =
+      WS.url("http://localhost:8888/apps/ping")
+      .get().map(x => Some(x.body))
+      .recover { case e:java.net.ConnectException => Some("Refused")}    
+    val timeoutFuture = Promise.timeout(Some("Fail"), 2.seconds)    
+    Async {
+      scala.concurrent.Future.firstCompletedOf(Seq(pingFuture, timeoutFuture)).map {
+        case Some("pong") => statusOk
+        case x => statusFail
       }
-    } catch {
-      case _:Throwable => statusFail
     }
   }
 }

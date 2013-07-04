@@ -1,0 +1,26 @@
+@(title: String)(content: Html)
+
+<!DOCTYPE html>
+
+<html data-ng-app>
+    <head>
+        <title>@title</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+        <!-- KickStart -->
+        <script src="@routes.Assets.at("javascripts/kickstart.js")" type="text/javascript"></script>
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/kickstart/kickstart.css")" media="all" />
+        <!-- angular.js -->
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
+        <!-- custom css -->
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/add.css")">
+        <!-- angular controllers -->
+        <script src="@routes.Assets.at("javascripts/MainController.js")" type="text/javascript"></script>
+    </head>
+    <body>
+        <div data-ng-controller="MainController">
+          @content
+        </div>
+    </body>
+</html>
