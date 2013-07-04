@@ -14,6 +14,7 @@ window.MainController = ($scope, $http) ->
 
   restart_service = ($http) ->
     $http.post("/restart/")
+    location.reload()
 
   stop_service = ($http) ->
     $http.post("/stop/")
