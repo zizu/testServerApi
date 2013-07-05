@@ -15,7 +15,7 @@
       <div class="commits">
         @for((sha, date, author, desc) <- lastCommits) {
           <p>
-            <span class="sha" onclick="checkout_commit('@sha')"><a href="#">@sha</a></span><br />
+            <span class="sha" ng-click="checkout_commit('@sha')"><a href="#">@sha</a></span><br />
             <span>@date, </span><span>@author</span><br />
             <span class="desc">@desc</span><br />
             <hr class="alt2" />
@@ -87,7 +87,7 @@
   <div class="log center">    
     <textarea id="log-area"> </textarea>
     <script>
-      var socket = new WebSocket("ws://localhost:9000/serviceLog/");
+      var socket = new WebSocket("ws://dwarf1:9000/serviceLog/");
       socket.onmessage = function(msg) {
         var area = $("textarea#log-area");
         area.val(area.val() + "\n" + msg.data);

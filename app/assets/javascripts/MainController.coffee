@@ -26,6 +26,7 @@ window.MainController = ($scope, $http) ->
     
   $scope.checkout_commit = (hash) ->
     $http.post("/checkoutCommit/" + hash + "/")
+         .success((data, status, headers, config) -> location.reload())
     
   $scope.checkout_branch = () ->
     $http.post("/checkoutBranch/" + $scope.currentSelectedBranch + "/")

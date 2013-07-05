@@ -20,6 +20,8 @@ object Application extends Controller {
   private lazy val wtDir = """%s/Expert""" format(rootDir)
   private lazy val makeDirFile = new java.io.File("""%s/Expert/src/code/""" format(rootDir))
 
+  println("rootDir: %s, wtDir: %s, makeDirFile: %s".format(rootDir, wtDir, makeDirFile))
+
   private def wt     = WorkingTree.getInstance(wtDir)
   private def dotGit = wt.getDotGit()
   
@@ -27,9 +29,13 @@ object Application extends Controller {
   private var serviceStarted = false
   private var serviceStream : Stream[String] = Stream.Empty
   private var serviceInput : Option[Output] = None
+
+  //println(("make -C %s".format(makeDirFile)).!!)
   
-  private def executeGitCommand(cmd : String) = 
+  private def executeGitCommand(cmd : String) = {
+    println("Will execute git command: [%s]".format(cmd))
     "git --git-dir=%s/.git %s".format(wtDir, cmd).!!
+  }
   
   private def fetchAll = {
     executeGitCommand("fetch -a")
