@@ -1,4 +1,6 @@
 window.MainController = ($scope, $http) ->
+  $scope.branches = []
+  
   check_status = ($scope, $http) ->
     $http.get("/status/")
          .success((data, status, headers, config) ->
@@ -12,18 +14,34 @@ window.MainController = ($scope, $http) ->
     ,
       2000)
 
-  restart_service = ($http) ->
+  $scope.restart_service = () ->
     $http.post("/restart/")
-    location.reload()
+         .success((data, status, headers, config) -> location.reload())
 
-  stop_service = ($http) ->
+  $scope.stop_service = () ->
     $http.post("/stop/")
     
-  checkout_commit = ($http, hash) ->
+  $scope.checkout_all = () ->
+    $http.post("/checkoutAll/")
+    
+  $scope.checkout_commit = (hash) ->
     $http.post("/checkoutCommit/" + hash + "/")
-
+    
+  $scope.checkout_branch = () ->
+    $http.post("/checkoutBranch/" + $scope.currentSelectedBranch + "/")
+         .success((data, status, headers, config) -> location.reload())    
+  
+  $scope.add_to_branches = (branch) ->
+    $scope.branches.push(branch)
+  
+  $scope.clear_branches = () ->
+    $scope.branches = []
+  
+  $scope.restart_cassandra = () ->
+    $http.post("/cassandra/restart/")
+  
+  $scope.stop_cassandra = () ->
+    $http.post("/cassandra/stop/")
+  
   run_status_checker($scope, $http)
   check_status($scope, $http)
-  window.restart_service = () -> restart_service($http)
-  window.stop_service = () -> stop_service($http)
-  window.checkout_commit = (hash) -> checkout_commit($http)

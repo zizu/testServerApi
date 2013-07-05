@@ -10,11 +10,10 @@ import edu.nyu.cs.javagit.api._
 import java.io._
 import scala.collection.JavaConversions._
 import scala.concurrent.duration._
-
-import scala.sys.process.Process
-import scala.sys.process.ProcessIO
+import scala.sys.process._
 import scalax.io._
 import scalax.io.JavaConverters._
+import edu.nyu.cs.javagit.api.commands.GitCheckout
 
 object Application extends Controller {
   private lazy val rootDir = """/home/%s/testServerApi""" format(System.getProperty("user.name"))
@@ -27,32 +26,41 @@ object Application extends Controller {
   //service state and streams
   private var serviceStarted = false
   private var serviceStream : Stream[String] = Stream.Empty
-  private var serviceInput : Option[Output] = None 
-
-  private def checkRepository = {
-
+  private var serviceInput : Option[Output] = None
+  
+  private def executeGitCommand(cmd : String) = 
+    "git --git-dir=%s/.git %s".format(wtDir, cmd).!!
+  
+  private def fetchAll = {
+    executeGitCommand("fetch -a")
   }
 
   private def commits =
     dotGit.getLog().toList.take(20).map(x => (x.getSha(), x.getDateString(), x.getAuthor(), x.getMessage()))
 
   private def branches =
-    dotGit.getBranches().toList.map(_.getName())
+    //dotGit.getBranches().toList.map(_.getName())
+    executeGitCommand("branch -a").split("\n").map(x => x.substring(1).trim().split("""/""").toList.last).toSet.toList
 
   private def currentBranch =
-    wt.getCurrentBranch().getName()
+    try { wt.getCurrentBranch().getName() }
+    catch { case _:Exception => ""}
 
-  private def checkoutBranch(name : String) {
-    wt.checkout(dotGit.getBranches().toList.find(x => x.getName() == name).get)
+  private def checkoutBranch(branchName : String) {
+    val command = """checkout -f %s""" format(branchName)
+    val fallbackCommand = """checkout -b %s origin/%s""" format(branchName, branchName)
+    executeGitCommand("checkout .")
+    try { executeGitCommand(command) } 
+    catch { case _:Exception => executeGitCommand(fallbackCommand) }
   }
-
-  // private def checkoutCommit(hash : String) {
-  //   wt.checkout(commits.find(x => x._2 == hash).get._1)
-  // }
-
+  
+  private def currentCommit = 
+    executeGitCommand("""log --pretty=oneline""").split("\n").map(_.split(" ").toList).map({case x::xs => (x, xs.mkString(" ")) }).head
+    
   def index = Action {
+    fetchAll
     Ok(views.html.index(JavaGitConfiguration.getGitVersion(),
-                        commits, currentBranch, branches))
+                        commits, currentBranch, branches, currentCommit))
   }
 
   def restart = Action {
@@ -77,9 +85,28 @@ object Application extends Controller {
     Ok
   } 
   
-  def checkoutAll = TODO
-  def checkoutBranchWithName(name : String) = TODO
-  def checkoutCommitWithHash(hash : String) = TODO
+  def checkoutAll = Action {    
+    Ok(executeGitCommand("checkout ."))
+  }
+  
+  def checkoutBranchWithName(name : String) = Action {
+    checkoutBranch(name)
+    Ok  
+  }
+  
+  def checkoutCommitWithHash(hash : String) = Action {    
+    Ok(executeGitCommand("checkout %s" format(hash)))
+  }
+  
+  def restartCassandra = Action {
+    "sudo service cassandra restart".!
+    Ok
+  }
+  
+  def stopCassandra = Action {
+    "sudo service cassandra stop".!
+    Ok
+  }
   
   protected def statusOk = {
     serviceStarted = true

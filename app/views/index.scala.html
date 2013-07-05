@@ -1,4 +1,4 @@
-@(gitVersion: String, lastCommits: List[(String, String, String, String)], currentBranch: String, branches : List[String])
+@(gitVersion: String, lastCommits: List[(String, String, String, String)], currentBranch: String, branches : List[String], currentCommit: (String, String))
 
 @main("Welcome to Play 2.1") {
   <p>
@@ -32,40 +32,42 @@
           <span><strong>Current branch: </strong></span>
           <span>@currentBranch</span>
         </p>
-
-<!--
-        //   POST    /restart/                   controllers.Application.restart
-// POST    /stop/                      controllers.Application.stop
-// POST    /checkoutAll/               controllers.Application.checkoutAll
-// POST    /checkoutBranch/:name/      controllers.Application.checkoutBranch(name : String) -->
+        
+        <p>
+          <span><strong>Current commit: </strong></span>
+          <span>@currentCommit._1</span>
+          <span>@currentCommit._2</span>
+        </p>
 
         <p>
           <span><strong>Branch to checkout: </strong></span>
           <span>
-            <select>
-              @for(branch <- branches) {
-                <option value="@branch">@branch</option>
-              }
+            <span ng-init="clear_branches()"></span>
+            @for(branch <- branches) {
+                <span ng-init='add_to_branches("@branch")'></span>
+            }
+            <span ng-init="currentSelectedBranch='@currentBranch'"></span>
+            <select ng-model="currentSelectedBranch" ng-options="branch for branch in branches">              
             </select>
           </span>
           <span>
-            <button class="button orange"> <i class="icon-magic"></i> Checkout </button>
+            <button class="button orange" ng-click="checkout_branch()"> <i class="icon-magic"></i> Checkout </button>
           </span>
         </p>
 
         <hr />
 
         <p class="center">
-          <button class="button green" onclick="restart_service()"> <i class="icon-play"></i> (Re)Start service</button>
-          <button class="button red" onclick="stop_service()"> <i class="icon-stop"></i> Stop service</button>
-          <button class="button red"> <i class="icon-bolt"></i> Checkout all</button>
+          <button class="button green" ng-click="restart_service()"> <i class="icon-play"></i> (Re)Start service</button>
+          <button class="button red" ng-click="stop_service()"> <i class="icon-stop"></i> Stop service</button>
+          <button class="button red" ng-click="checkout_all()"> <i class="icon-bolt"></i> Checkout all</button>
         </p>
 
         <hr />
 
         <p class="center">
-          <button class="button green"> <i class="icon-play"></i> (Re)Start Cassandra</button>
-          <button class="button red"> <i class="icon-stop"></i> Stop Cassandra</button>
+          <button class="button green" ng-click="stop_cassandra()"> <i class="icon-play"></i> (Re)Start Cassandra</button>
+          <button class="button red" ng-click="restart_cassandra()"> <i class="icon-stop"></i> Stop Cassandra</button>
         </p>
       </div>
 
