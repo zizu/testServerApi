@@ -44,5 +44,13 @@ window.MainController = ($scope, $http) ->
   $scope.stop_cassandra = () ->
     $http.post("/cassandra/stop/")
   
+  $scope.fetch_all = () ->
+    $http.post("/fetchAll/")
+         .success((data, status, headers, config) -> location.reload())
+  
+  $scope.pull_current = () ->
+    $http.post("/pullCurrent/")
+         .success((data, status, headers, config) -> location.reload())
+  
   run_status_checker($scope, $http)
   check_status($scope, $http)

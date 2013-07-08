@@ -16,6 +16,8 @@ import scalax.io.JavaConverters._
 import edu.nyu.cs.javagit.api.commands.GitCheckout
 
 object Application extends Controller {
+  private lazy val hostname = java.net.InetAddress.getLocalHost.getHostName()
+  
   private lazy val rootDir = """/home/%s/testServerApi""" format(System.getProperty("user.name"))
   private lazy val wtDir = """%s/Expert""" format(rootDir)
   private lazy val makeDirFile = new java.io.File("""%s/Expert/src/code/""" format(rootDir))
@@ -37,10 +39,6 @@ object Application extends Controller {
     "git --git-dir=%s/.git %s".format(wtDir, cmd).!!
   }
   
-  private def fetchAll = {
-    executeGitCommand("fetch -a")
-  }
-
   private def commits =
     dotGit.getLog().toList.take(20).map(x => (x.getSha(), x.getDateString(), x.getAuthor(), x.getMessage()))
 
@@ -51,6 +49,10 @@ object Application extends Controller {
   private def currentBranch =
     try { wt.getCurrentBranch().getName() }
     catch { case _:Exception => ""}
+    
+  private def gitCheckoutAll = 
+    //executeGitCommand("checkout .")
+    executeGitCommand("reset HEAD --hard")
 
   private def checkoutBranch(branchName : String) {
     val command = """checkout -f %s""" format(branchName)
@@ -64,9 +66,9 @@ object Application extends Controller {
     executeGitCommand("""log --pretty=oneline""").split("\n").map(_.split(" ").toList).map({case x::xs => (x, xs.mkString(" ")) }).head
     
   def index = Action {
-    fetchAll
     Ok(views.html.index(JavaGitConfiguration.getGitVersion(),
-                        commits, currentBranch, branches, currentCommit))
+                        commits, currentBranch, branches, currentCommit,
+                        hostname))
   }
 
   def restart = Action {
@@ -92,7 +94,7 @@ object Application extends Controller {
   } 
   
   def checkoutAll = Action {    
-    Ok(executeGitCommand("checkout ."))
+    Ok(gitCheckoutAll)
   }
   
   def checkoutBranchWithName(name : String) = Action {
@@ -102,6 +104,15 @@ object Application extends Controller {
   
   def checkoutCommitWithHash(hash : String) = Action {    
     Ok(executeGitCommand("checkout %s" format(hash)))
+  }
+  
+  def fetchAll = Action {
+    Ok(executeGitCommand("fetch -a"))
+  }
+  
+  def pullCurrent = Action {
+    gitCheckoutAll
+    Ok(executeGitCommand("pull --rebase"))
   }
   
   def restartCassandra = Action {

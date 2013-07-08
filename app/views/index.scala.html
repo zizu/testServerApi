@@ -1,4 +1,10 @@
-@(gitVersion: String, lastCommits: List[(String, String, String, String)], currentBranch: String, branches : List[String], currentCommit: (String, String))
+@(gitVersion: String, 
+  lastCommits: List[(String, String, String, String)], 
+  currentBranch: String, 
+  branches : List[String], 
+  currentCommit: (String, String),
+  hostname : String
+)
 
 @main("Welcome to Play 2.1") {
   <p>
@@ -32,7 +38,7 @@
           <span><strong>Current branch: </strong></span>
           <span>@currentBranch</span>
         </p>
-        
+
         <p>
           <span><strong>Current commit: </strong></span>
           <span>@currentCommit._1</span>
@@ -47,11 +53,20 @@
                 <span ng-init='add_to_branches("@branch")'></span>
             }
             <span ng-init="currentSelectedBranch='@currentBranch'"></span>
-            <select ng-model="currentSelectedBranch" ng-options="branch for branch in branches">              
+            <select ng-model="currentSelectedBranch" ng-options="branch for branch in branches">
             </select>
           </span>
           <span>
             <button class="button orange" ng-click="checkout_branch()"> <i class="icon-magic"></i> Checkout </button>
+          </span>
+        </p>
+        
+        <p>
+          <span>
+            <button class="button green" ng-click="fetch_all()"> <i class="icon-cloud-download"></i> Fetch All </button>
+          </span>
+          <span>
+            <button class="button green" ng-click="pull_current()"> <i class="icon-download-alt"></i> Pull (current branch) </button>
           </span>
         </p>
 
@@ -84,10 +99,10 @@
 
   <hr />
 
-  <div class="log center">    
+  <div class="log center">
     <textarea id="log-area"> </textarea>
     <script>
-      var socket = new WebSocket("ws://dwarf1:9000/serviceLog/");
+      var socket = new WebSocket("ws://@hostname:9000/serviceLog/");
       socket.onmessage = function(msg) {
         var area = $("textarea#log-area");
         area.val(area.val() + "\n" + msg.data);
