@@ -21,7 +21,9 @@
       <div class="commits">
         @for((sha, date, author, desc) <- lastCommits) {
           <p>
-            <span class="sha" ng-click="checkout_commit('@sha')"><a href="#">@sha</a></span><br />
+            <span class="sha" ng-click="checkout_commit('@sha')"><a href="#">@sha</a></span>
+            <span class="github-link"> <a href="https://github.com/amogil/Expert/commit/@sha">(Github)</a></span>
+            <br />
             <span>@date, </span><span>@author</span><br />
             <span class="desc">@desc</span><br />
             <hr class="alt2" />
