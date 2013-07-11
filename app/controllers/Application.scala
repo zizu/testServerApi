@@ -18,9 +18,9 @@ object Application extends Controller {
   import Utility._
   
   //service state and streams
-  private var serviceStarted = false
-  private var serviceStream : Stream[String] = Stream.Empty
-  private var serviceInput : Option[Output] = None
+  @volatile private var serviceStarted = false
+  @volatile private var serviceStream : Stream[String] = Stream.Empty
+  @volatile private var serviceInput : Option[Output] = None
 
   def index = Action {
     Ok(views.html.index(JavaGitConfiguration.getGitVersion(),
