@@ -1,0 +1,55 @@
+#!/bin/bash
+#starts and stops test server
+#
+
+USER="user"
+SERVICEPATH="/home/$USER/testServerApiApp/testServerApi"
+RUNPATH="$SERVICEPATH/target/start"
+PIDFILE="$SERVICEPATH/RUNNING_PID"
+
+pidof_service() {
+	if [ -e "$PIDFILE" ]; then
+		if ps aux | grep play | tr ' ' '\n' | grep -w $(cat $PIDFILE); then
+			return 0
+		fi
+	fi
+	return 1
+}
+
+case "$1" in
+start)
+
+	start-stop-daemon --start --exec $RUNPATH -c $USER -d $SERVICEPATH -b --pidfil $PIDFILE
+;;
+
+stop)
+	
+	start-stop-daemon --stop --signal TERM --pidfile $PIDFILE
+;;
+
+status)
+
+	PID=$(pidof_service) || true
+	if [ -n "$PID" ]; then
+		echo "testserver is running (pid $PID)."
+		exit 0
+	else
+		echo "testserver is NOT running."
+		if [ -e "$PIDFILE" ]; then
+			exit 1
+		else
+			exit 3
+		fi
+	fi
+;;
+
+restart)
+  	$0 stop
+  	$0 start
+;;
+
+*)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+esac
+
